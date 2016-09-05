@@ -1,7 +1,7 @@
 CC=gcc
-CPPFLAGS=-I./include
+CPPFLAGS=-I./include -I/usr/local/include/hiredis/
 CFLAGS=-Wall 
-LIBS= 
+LIBS=-lhiredis -lpthread
 
 #找到当前目录下所有的.c文件
 src = $(wildcard *.c)
@@ -21,7 +21,7 @@ $(obj):%.o:%.c
 	$(CC) -c $< -o $@ $(CPPFLAGS) $(CFLAGS) 
 
 #test
-$(test): test_main.o make_log.o
+$(test): test_main.o make_log.o redis_op.o
 	$(CC) $^ -o $@ $(LIBS)
 
 #fdfs_test

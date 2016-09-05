@@ -5,24 +5,38 @@
 #include <pthread.h>
 
 #include "make_log.h"
+#include "redis_op.h"
 
-void func(int a, int b)
-{
-    printf("a = %d, b = %d\n", a, b);
-}
+#define LOG_MAIN_TEST   "test"
+#define LOG_MAIN_PROC   "main-test"
 
 int main(int argc, char *argv[])
 {
-    int a = 10;
+    redisContext *conn = NULL;
+    char key[128] = { 0 };
+    char str[128] = { 0 };
+    char *ip = "127.0.0.1";
+    char *port = "6379";
 
-    LOG("111", "222", "abcd %s", "123");
-    LOG("111", "222", "abcd %s", "666");
-    LOG("111", "222", "abcd %s", "456");
-
-
-    if (a == 10) {
-        printf("a = %d\n", a);
+    conn = rop_connectdb_nopwd(ip, port);
+    if (conn == NULL){
+        LOG(LOG_MAIN_TEST, LOG_MAIN_PROC, "conn redis server error");
+        exit(1);
     }
+
+    printf("connect server succ!\n");
+
+    rop_set_string(conn, "itcast", "0512");
+
+    printf("pleace input key\n");
+
+    scanf("%s", key);
+
+    rop_get_string(conn, key, str);
+
+    printf("%s = %s\n", key, str);
+
+    rop_disconnect(conn);
 
     return 0;
 }
